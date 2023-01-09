@@ -1,0 +1,54 @@
+﻿@using DemoApplication.Areas.Admin.ViewModels.Slider
+@model List<ListSliderViewModel>
+
+<div class="col-lg-12">
+    <div class="row justify-content-end">
+        <div class="">
+            <a asp-controller="slider" asp-action="add" target="_blank" class="btn btn-secondary">Add new book</a>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Books</h4>
+        </div><!--end card-header-->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Author</th>
+                            <th>Created at</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var slider in Model)
+                        {
+                            <tr>
+
+                                <td>@slider.MainTitle</td>
+                                <td>@slider.Content</td>
+                                <td>@slider.ButtonName</td>
+                                <td>@slider.ButtonRedirectUrl</td>
+                                <td>@slider.Order</td>
+                                <td>@slider.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                <td>@slider.UpdatedAt.ToString("dd/MM/yyyy")</td>
+                                <td class="text-end">
+                                    <a asp-route="admin-slider-update" asp-route-id="@slider.Id"><i class="las la-pen text-secondary font-16"></i></a>
+                                    <form method="POST" asp-route="admin-slider-delete" asp-route-id="@slider.Id" id="book-form-@slider.Id"></form>
+                                    <button type="submit" form="book-form-@slider.Id">
+                                        <i class="las la-trash-alt text-secondary font-16"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table><!--end /table-->
+            </div><!--end /tableresponsive-->
+        </div><!--end card-body-->
+    </div><!--end card-->
+</div>

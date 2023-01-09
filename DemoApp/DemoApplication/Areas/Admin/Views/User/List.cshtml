@@ -1,0 +1,108 @@
+﻿@using DemoApplication.Areas.Admin.ViewModels.User
+@model List<LIstUserViewModel>
+
+<div class="col-lg-12">
+    <div class="row justify-content-end">
+        <div class="">
+            <a asp-route="admin-user-add" class="btn btn-secondary">Add User</a>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Books</h4>
+        </div><!--end card-header-->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Price</th>
+                            <th>Author</th>
+                            <th>Created at</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.Email</td>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                <td>@user.CreatedAt</td>
+                                <td>@user.UpdatedAt</td>
+                                @if (@user.Roles != null)
+                                {
+                                    <td>@user.Roles</td>
+                                }
+                                @if (@user.Roles == null)
+                                {
+                                    <td>User</td>
+                                }
+                                <td class="text-end">
+                                    <a asp-route="admin-user-update" asp-route-id="@user.Id"><i class="las la-pen text-secondary font-16"></i></a>
+                                    <form method="POST" asp-route="admin-user-delete" asp-route-id="@user.Id" id="book-form-@user.Id"></form>
+                                    <button type="submit" form="book-form-@user.Id">
+                                        <i class="las la-trash-alt text-secondary font-16"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table><!--end /table-->
+            </div><!--end /tableresponsive-->
+        </div><!--end card-body-->
+    </div><!--end card-->
+</div>
+<div class="row pt--30">
+    <div class="col-md-12">
+        <div class="pagination-block">
+            <ul class="pagination-btns flex-center">
+                @if (ViewBag.CurrentPage > 2)
+                {
+
+                    <li>
+                        <a asp-route-page="@(ViewBag.CurrentPage-2)" class="single-btn prev-btn ">
+                            |<i class="zmdi zmdi-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage > 1)
+                {
+
+                    <li>
+                        <a asp-route-page="@(ViewBag.CurrentPage-1)" class="single-btn prev-btn ">
+                            <i class="zmdi zmdi-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @for (var i = 1; i <= ViewBag.TotalPage; i++)
+                {
+
+                    <li class=@(ViewBag.CurrentPage == i ? "active" : "" )><a asp-route-page="@i" class="single-btn">@i</a></li>
+                }
+                @if (ViewBag.CurrentPage < ViewBag.TotalPage)
+                {
+
+                    <li>
+                        <a asp-route-page="@(ViewBag.CurrentPage+1)" class="single-btn next-btn">
+                            <i class="zmdi zmdi-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+                @if (ViewBag.CurrentPage + 1 < ViewBag.TotalPage)
+                {
+
+                    <li>
+                        <a asp-route-page="@(ViewBag.CurrentPage+2)" class="single-btn next-btn">
+                            <i class="zmdi zmdi-chevron-right"></i>|
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
