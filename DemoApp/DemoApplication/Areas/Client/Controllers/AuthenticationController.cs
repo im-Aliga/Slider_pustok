@@ -1,4 +1,5 @@
 ﻿using DemoApplication.Areas.Client.ViewModels.Authentication;
+using DemoApplication.Contracts.Email;
 using DemoApplication.Contracts.Identity;
 using DemoApplication.Database;
 using DemoApplication.Database.Models;
@@ -19,12 +20,16 @@ namespace DemoApplication.Controllers
     {
         private readonly DataContext _dbContext;
         private readonly IUserService _userService;
+        private readonly IEmailService _emailService;
 
-        public AuthenticationController(DataContext dbContext, IUserService userService)
+        public AuthenticationController(DataContext dbContext, IUserService userService, IEmailService emailService)
         {
             _dbContext = dbContext;
             _userService = userService;
+            _emailService = emailService;
         }
+
+
 
         #region Login and Logout
 
@@ -52,7 +57,7 @@ namespace DemoApplication.Controllers
                 ModelState.AddModelError(String.Empty, "Email or password is not correct");
                 return View(model);
             }
-          
+
             if (await _dbContext.Users.AnyAsync(u => u.Email == model.Email && u.Role.Name == RoleNames.ADMIN))
             {
 
@@ -90,12 +95,40 @@ namespace DemoApplication.Controllers
             {
                 return View(model);
             }
+            var emails = new List<string>();
+            emails.Add(model.Email);
 
             await _userService.CreateAsync(model);
+            var message = new MessageDto(emails, "activate profile", $"https://localhost:7026/auth/email?email={model.Email}");
+            _emailService.Send(message);
+
 
             return RedirectToRoute("client-auth-login");
         }
 
         #endregion
+
+        [HttpGet("email", Name = "client-auth-email")]
+        public async Task<IActionResult> EmailAsync(string email)
+        {
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user is null) return NotFound();
+
+            var time = DateTime.Now.Hour - user.CreatedAt.Hour;
+
+            if (time <= 2)
+            {
+                user.IsActive = true;
+                await _dbContext.SaveChangesAsync();
+
+            }
+            return RedirectToRoute("client-auth-login");
+
+
+
+        }
     }
 }
+
+

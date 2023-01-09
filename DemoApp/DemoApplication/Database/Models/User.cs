@@ -9,6 +9,8 @@ namespace DemoApplication.Database.Models
         public string? LastName { get; set; }
         public string? Password { get; set; }
 
+        public bool? IsActive { get; set; }
+
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
